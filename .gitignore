@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build outputs
+# Common build directory names for React/Vue/Angular etc.
+dist/
+build/
+**/dist/
+**/build/
+
+# Environment files
+# Keep .env files private. You can add .env.example to git if you want to share the structure
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+
+# Debug/Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+eslint-debug.log*
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Editor/IDE directories
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project specific ignores
+.cache/
