@@ -213,9 +213,9 @@ const EventBuilder = () => {
       <Sidebar />
       <div className="flex-1 flex flex-col relative w-full">
         <TopBar alertActive={false} />
-        <main className="flex-1 p-6 lg:p-10 flex gap-6 overflow-hidden">
-          {/* Sidebar - Fixed width, grows to height, items scroll centrally */}
-          <div className="w-full lg:w-1/3 flex flex-col gap-6 h-full">
+        <main className="flex-1 p-6 lg:p-10 flex gap-6 min-h-0">
+          {/* Left Panel — entire column scrolls */}
+          <div className="w-full lg:w-1/3 flex flex-col gap-4 overflow-y-auto pr-2" style={{maxHeight:'calc(100vh - 120px)'}}>
             <div className="shrink-0">
               <h1 className="text-3xl font-bold tracking-tight text-white mb-2">{isEditMode ? 'Edit Operation' : 'Operation Builder'}</h1>
               <p className="text-slate-400 text-sm">{isEditMode ? 'Modify zones, routes, and parameters for this event.' : 'Designate security perimeters, capacity thresholds, and crowd routes.'}</p>
@@ -246,39 +246,38 @@ const EventBuilder = () => {
                <h3 className="font-bold text-lg text-primary/90">Asset Manifest <span className="text-slate-500 font-normal">({zones.length} Zones, {routes.length} Routes)</span></h3>
             </div>
 
-            {/* Scrollable list area */}
-            <div className="flex-1 overflow-y-auto flex flex-col gap-3 min-h-0 pr-2 custom-scrollbar">
-               {!drawMode ? (
-                 <div className="shrink-0 flex gap-2 mb-2">
-                   <button className="flex-1 bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary px-4 py-3 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2" onClick={() => setDrawMode('zone')}>
-                     <PlusCircle size={18} /> New Zone
-                   </button>
-                   <button className="flex-1 bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/30 text-yellow-500 px-4 py-3 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2" onClick={() => setDrawMode('route')}>
-                     <PlusCircle size={18} /> New Route
-                   </button>
-                 </div>
-               ) : (
-                 <div className={`shrink-0 p-4 rounded-xl border animate-in fade-in slide-in-from-top-1 duration-300 ${drawMode === 'zone' ? 'bg-blue-900/20 border-blue-500/40' : 'bg-yellow-900/20 border-yellow-500/40'}`}>
-                   <div className="flex justify-between items-center mb-3">
-                     <p className="text-sm font-bold uppercase tracking-wider text-white">
-                       {redrawTarget ? `Redrawing ${redrawTarget.type}` : `New ${drawMode}`}
-                     </p>
-                     <button onClick={cancelDraw} className="text-slate-400 hover:text-white"><X size={18} /></button>
-                   </div>
-                   <div className="flex flex-col gap-3">
-                     <input type="text" placeholder={`${drawMode === 'zone' ? 'Zone' : 'Route'} Name`} className="bg-slate-900/50 border border-slate-700 p-2.5 rounded text-white text-sm" value={drawMode === 'zone' ? zoneName : routeName} onChange={e => drawMode === 'zone' ? setZoneName(e.target.value) : setRouteName(e.target.value)} />
-                     {drawMode === 'zone' && (
-                       <input type="number" placeholder="Capacity" className="bg-slate-900/50 border border-slate-700 p-2.5 rounded text-white text-sm" value={zoneCap} onChange={e => setZoneCap(e.target.value)} />
-                     )}
-                     <div className="flex gap-2 mt-1">
-                        <button className={`flex-1 ${drawMode === 'zone' ? 'bg-primary' : 'bg-yellow-600'} hover:opacity-90 text-white rounded-lg py-2.5 text-sm font-bold shadow-lg`} onClick={drawMode === 'zone' ? finishZone : finishRoute}>
-                          Confirm Data
-                        </button>
-                        <button className="bg-slate-700 hover:bg-slate-600 text-white rounded-lg px-4 py-2.5 text-sm font-bold" onClick={cancelDraw}>Cancel</button>
-                     </div>
-                   </div>
-                 </div>
-               )}
+            {/* Action Panel - Sticky at top of manifest */}
+            {!drawMode ? (
+              <div className="shrink-0 flex gap-2">
+                <button className="flex-1 bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary px-4 py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2" onClick={() => setDrawMode('zone')}>
+                  <PlusCircle size={18} /> New Zone
+                </button>
+                <button className="flex-1 bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/30 text-yellow-500 px-4 py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2" onClick={() => setDrawMode('route')}>
+                  <PlusCircle size={18} /> New Route
+                </button>
+              </div>
+            ) : (
+              <div className={`shrink-0 p-4 rounded-xl border animate-in fade-in slide-in-from-top-1 duration-300 ${drawMode === 'zone' ? 'bg-blue-900/20 border-blue-500/40' : 'bg-yellow-900/20 border-yellow-500/40'}`}>
+                <div className="flex justify-between items-center mb-3">
+                  <p className="text-sm font-bold uppercase tracking-wider text-white">
+                    {redrawTarget ? `Redrawing ${redrawTarget.type}` : `New ${drawMode}`}
+                  </p>
+                  <button onClick={cancelDraw} className="text-slate-400 hover:text-white"><X size={18} /></button>
+                </div>
+                <div className="flex flex-col gap-3">
+                  <input type="text" placeholder={`${drawMode === 'zone' ? 'Zone' : 'Route'} Name`} className="bg-slate-900/50 border border-slate-700 p-2.5 rounded text-white text-sm" value={drawMode === 'zone' ? zoneName : routeName} onChange={e => drawMode === 'zone' ? setZoneName(e.target.value) : setRouteName(e.target.value)} />
+                  {drawMode === 'zone' && (
+                    <input type="number" placeholder="Capacity" className="bg-slate-900/50 border border-slate-700 p-2.5 rounded text-white text-sm" value={zoneCap} onChange={e => setZoneCap(e.target.value)} />
+                  )}
+                  <div className="flex gap-2 mt-1">
+                     <button className={`flex-1 ${drawMode === 'zone' ? 'bg-primary' : 'bg-yellow-600'} hover:opacity-90 text-white rounded-lg py-2.5 text-sm font-bold shadow-lg`} onClick={drawMode === 'zone' ? finishZone : finishRoute}>
+                       Confirm Data
+                     </button>
+                     <button className="bg-slate-700 hover:bg-slate-600 text-white rounded-lg px-4 py-2.5 text-sm font-bold" onClick={cancelDraw}>Cancel</button>
+                  </div>
+                </div>
+              </div>
+            )}
 
                {zones.map((z, i) => (
                   <div key={`zone-${i}`} className={`bg-slate-900/40 backdrop-blur-sm rounded-xl border transition-all duration-200 ${editingZone === i ? 'border-primary ring-1 ring-primary/30 shadow-[0_0_15px_rgba(14,165,233,0.1)]' : 'border-slate-700'} group`}>
@@ -338,9 +337,8 @@ const EventBuilder = () => {
                      )}
                   </div>
                ))}
-            </div>
 
-            <div className="shrink-0 pt-2 border-t border-white/5">
+            <div className="pt-4 mt-2 border-t border-white/5">
               <button 
                 className="w-full bg-primary hover:bg-primary/80 text-white font-bold py-4 rounded-xl text-lg shadow-[0_0_25px_rgba(14,165,233,0.3)] hover:shadow-[0_0_35px_rgba(14,165,233,0.4)] transition-all transform hover:-translate-y-0.5 active:translate-y-0" 
                 onClick={submitEvent}
